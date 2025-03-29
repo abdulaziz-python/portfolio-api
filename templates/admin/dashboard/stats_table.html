@@ -1,0 +1,102 @@
+{% load dashboard_tags %}
+
+<div class="mt-5">
+    <div class="grid grid-cols-1 gap-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Kunlik Statistika</h3>
+                <div class="overflow-x-auto">
+                    <table class="table-auto w-full">
+                        <thead>
+                            <tr class="bg-gray-100 dark:bg-gray-800">
+                                <th class="p-3 text-left font-medium">Kategoriya</th>
+                                <th class="p-3 text-center font-medium">Jami</th>
+                                {% for date in dates %}
+                                <th class="p-3 text-center font-medium">{{ date }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in categories %}
+                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                <td class="p-3 font-medium">{{ category.title }}</td>
+                                <td class="p-3 text-center font-bold">{{ category.total }}</td>
+                                {% for value in category.data %}
+                                <td class="p-3 text-center">
+                                    {% if value > 0 %}
+                                    <div class="flex flex-col items-center">
+                                        <span>{{ value }}</span>
+                                        <span class="text-xs {{ colors|random }}">{{ value|percentage:category.total }}%</span>
+                                    </div>
+                                    {% else %}
+                                    <span>-</span>
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-6">
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+            O'xirgi 28 kun ichida mahsulot umumdorligi
+        </div>
+        <div class="mt-4">
+            <div class="h-24 w-full">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 30}, (_, i) => i + 1),
+            datasets: [{
+                label: 'Kunlik faollik',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                borderColor: '#3b82f6',
+                borderWidth: 2,
+                data: Array.from({length: 30}, () => Math.floor(Math.random() * 100) + 50),
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                x: {
+                    display: false
+                },
+                y: {
+                    display: false,
+                    suggestedMin: 0
+                }
+            },
+            elements: {
+                point: {
+                    radius: 0
+                }
+            }
+        }
+    });
+});
+</script> 
