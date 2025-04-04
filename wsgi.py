@@ -8,6 +8,10 @@ from io import BytesIO
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'portfolio.settings')
 
+# Agar AlwaysData muhitida bo'lsa, bu o'zgaruvchini sozlaymiz
+if os.environ.get('ALWAYSDATA_HTTPD_CONF'):
+    os.environ['ALWAYSDATA'] = 'true'
+
 application = get_wsgi_application()
 
 # Netlify Functions orqali ishlaganda
