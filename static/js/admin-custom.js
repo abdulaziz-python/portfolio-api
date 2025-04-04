@@ -15,7 +15,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Admin panelga qo'shimcha CSS klasslar qo'shish
     enhanceAdminStyles();
+    
+    // Dark mode sozlamalari
+    setupDarkMode();
 });
+
+/**
+ * Dark mode funksiyalari
+ */
+function setupDarkMode() {
+    // Agar localStorage'da saqlangan tema sozlamasi bo'lsa, uni qo'llaymiz
+    const savedTheme = localStorage.getItem('unfold_theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+    
+    // Theme toggle tugmasi bosilganda uning ishlashini ta'minlaymiz
+    const themeToggle = document.querySelector('.theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('unfold_theme', newTheme);
+        });
+    }
+}
 
 /**
  * Telegraph previewlarini sozlash funktsiyasi

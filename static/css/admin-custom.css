@@ -172,4 +172,87 @@
 .api-viewer__response pre {
     margin: 0;
     white-space: pre-wrap;
+}
+
+:root {
+  --primary-color: #0ea5e9;
+  --primary-hover: #0284c7;
+  --primary-active: #0369a1;
+  --surface-hover: rgba(14, 165, 233, 0.05);
+  --border-radius: 10px;
+}
+
+/* Dark mode uchun sozlamalar */
+html[data-theme="dark"] {
+  --primary-color: #0ea5e9;
+  --primary-hover: #38bdf8;
+  --primary-active: #7dd3fc;
+  --surface-hover: rgba(14, 165, 233, 0.1);
+}
+
+/* Admin formalarini stillashtirish */
+.unfold-form input[type="text"],
+.unfold-form input[type="password"],
+.unfold-form input[type="email"],
+.unfold-form input[type="url"],
+.unfold-form input[type="number"],
+.unfold-form textarea,
+.unfold-form select {
+  transition: all 0.2s ease;
+  border-radius: var(--border-radius);
+  border-width: 1px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+.unfold-form input[type="text"]:focus,
+.unfold-form input[type="password"]:focus,
+.unfold-form input[type="email"]:focus,
+.unfold-form input[type="url"]:focus,
+.unfold-form input[type="number"]:focus,
+.unfold-form textarea:focus,
+.unfold-form select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
+  outline: none;
+}
+
+/* Chiroyli kutublar */
+.unfold-card {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+}
+
+.unfold-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Dashboard maxsus stili */
+.unfold-dashboard-widget {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.unfold-dashboard-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark mode toggle */
+.theme-toggle {
+  margin-right: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+html[data-theme="dark"] .theme-toggle .theme-icon-when-dark,
+html[data-theme="light"] .theme-toggle .theme-icon-when-light,
+html[data-theme="auto"] .theme-toggle .theme-icon-when-auto {
+  opacity: 1;
 } 

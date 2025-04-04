@@ -41,6 +41,10 @@ UNFOLD = {
         lambda request: static("js/admin-custom.js"),
     ],
     "BORDER_RADIUS": "12px",
+    "THEME": {
+        "DEFAULT": "light",
+        "SWITCHER": True
+    },
     "COLORS": {
         "base": {
             "50": "202 210 224",
