@@ -1,15 +1,16 @@
 {
+  "version": 2,
   "builds": [
-    {
-      "src": "portfolio/wsgi.py",
-      "use": "@vercel/python"
-    },
     {
       "src": "build_files.sh",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "staticfiles_build"
       }
+    },
+    {
+      "src": "portfolio/wsgi.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
@@ -22,8 +23,19 @@
       "dest": "/media/$1"
     },
     {
+      "src": "/admin/(.*)",
+      "dest": "portfolio/wsgi.py"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "portfolio/wsgi.py"
+    },
+    {
       "src": "/(.*)",
       "dest": "portfolio/wsgi.py"
     }
-  ]
+  ],
+  "env": {
+    "ALLOWED_HOSTS": ".vercel.app, .abdulaziz.org.uz"
+  }
 } 

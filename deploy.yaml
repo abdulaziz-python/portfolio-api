@@ -1,0 +1,233 @@
+# Universal Web Deployment Configuration
+# Barcha hosting platformalar uchun universal konfiguratsiya
+
+# =================================================================
+# ASOSIY SOZLAMALAR
+# =================================================================
+app:
+  name: portfolio
+  environment: production # production, staging, development
+  runtime: python3.11
+  framework: django
+
+# =================================================================
+# BUILD SOZLAMALARI
+# =================================================================
+build:
+  # Build uchun asosiy buyruqlar
+  commands:
+    install: pip install -r requirements.txt  # Vercel, Netlify, Heroku
+    build: ./build_files.sh                   # Build skriptini ishga tushirish
+    test: python manage.py test               # Optional
+  
+  # Statik fayllarni yig'ish
+  static:
+    directory: staticfiles_build             # Statik fayllar joylashadigan papka
+    collect_command: python manage.py collectstatic --noinput
+  
+  # Natija katalog
+  output_directory: staticfiles_build        # Vercel va Netlify uchun
+  
+  # Netlify-specific
+  netlify:
+    publish: staticfiles_build
+    functions: netlify/functions
+
+  # Vercel-specific
+  vercel:
+    output_directory: staticfiles_build
+    ignore: [".git", "venv", "*.pyc", "__pycache__"]
+
+# =================================================================
+# RUNTIME SOZLAMALARI
+# =================================================================
+runtime:
+  # Server sozlamalari
+  server:
+    port: 8000                               # Default port
+    wsgi_application: portfolio.wsgi:application
+    asgi_application: portfolio.asgi:application
+  
+  # Procfile (Heroku & similar)
+  processes:
+    web: gunicorn portfolio.wsgi:application --log-file -
+    worker: celery -A portfolio worker -l info
+  
+  # Health check
+  health_check:
+    path: /admin/login/
+    interval: 30s
+    timeout: 5s
+    retries: 3
+
+# =================================================================
+# DATABASE SOZLAMALARI
+# =================================================================
+database:
+  # Asosiy sozlamalar (environmental variables orqali o'rnatilishi kerak)
+  use_env_variables: true
+  auto_migrate: true
+  migrate_command: python manage.py migrate
+  
+  # Database turlari
+  providers:
+    - postgresql
+    - mysql
+    - sqlite
+  
+  # Backup sozlamalari
+  backup:
+    enabled: true
+    frequency: daily
+    retention: 7
+
+# =================================================================
+# XAVFSIZLIK
+# =================================================================
+security:
+  # SSL/TLS
+  ssl: true
+  force_redirect: true
+  
+  # CORS
+  cors:
+    enabled: true
+    allowed_origins: 
+      - https://abdulaziz.org.uz
+      - https://*.abdulaziz.org.uz
+      - http://localhost:*
+
+# =================================================================
+# KONTEYNER (DOCKER) SOZLAMALARI 
+# =================================================================
+containers:
+  docker:
+    enabled: true
+    dockerfile: Dockerfile
+    compose_file: docker-compose.yml
+    registry: auto  # auto, dockerhub, github, gitlab, aws, azure
+  
+  # Kubernetes
+  kubernetes:
+    enabled: false
+    namespace: portfolio
+    replicas: 2
+
+# =================================================================
+# MUHIT O'ZGARUVCHILARI
+# =================================================================
+environment_variables:
+  # Bu yerda environmentga bog'liq o'zgaruvchilar o'rnatiladi
+  required:
+    - SECRET_KEY
+    - DATABASE_URL
+    - TELEGRAPH_TOKEN
+    - DEBUG
+  
+  # Default qiymatlar (testing va development uchun)
+  defaults:
+    DEBUG: false
+    ALLOWED_HOSTS: "*"
+    SITE_URL: "https://api.abdulaziz.org.uz"
+
+# =================================================================
+# MONITORING
+# =================================================================
+monitoring:
+  enabled: true
+  logging:
+    level: info
+    driver: auto  # auto, cloudwatch, stackdriver, elasticsearch
+  
+  # Alerting
+  alerting:
+    enabled: true
+    channels:
+      - email
+      - slack
+      - telegram
+
+# =================================================================
+# TURLI XiL PLATFORMALAR UCHUN SOZLAMALAR
+# =================================================================
+platforms:
+  # Vercel
+  vercel:
+    buildCommand: ./build_files.sh
+    outputDirectory: staticfiles_build
+    installCommand: pip install -r requirements.txt
+    framework: null
+    regions: ["all"]
+  
+  # Netlify
+  netlify:
+    build:
+      command: ./build_files.sh
+      publish: staticfiles_build
+    functions:
+      directory: netlify/functions
+  
+  # Heroku/Render
+  heroku:
+    buildpacks:
+      - heroku/python
+    addons:
+      - heroku-postgresql
+      - heroku-redis
+  
+  # AWS Elastic Beanstalk
+  aws_beanstalk:
+    platform: Python
+    instance_type: t2.micro
+    autoscaling:
+      min: 1
+      max: 4
+  
+  # Google Cloud Run
+  gcp:
+    cloud_run:
+      memory: 512Mi
+      concurrency: 80
+      timeout: 300s
+  
+  # Azure App Service
+  azure:
+    app_service:
+      tier: Basic
+      size: B1
+
+# =================================================================
+# DEPLOYMENT SOZLAMALARI
+# =================================================================
+deployment:
+  strategy: rolling  # rolling, blue-green, canary
+  auto_rollback: true
+  env_promotion: true  # dev -> staging -> production
+  
+  # CI/CD
+  ci_cd:
+    provider: github  # github, gitlab, jenkins, circleci
+    auto_deploy:
+      enabled: true
+      branches:
+        - master
+        - main
+      pull_requests: false
+
+# =================================================================
+# DARS
+# =================================================================
+# Bu konfiguratsiya faylidan foydalanish:
+# 1. Kerakli platformaga mos qismni oling (Vercel, Netlify, AWS, etc)
+# 2. Platformaga mos faylga saqlang (vercel.json, netlify.toml, etc)
+# 3. Environmentga bog'liq o'zgaruvchilarni platform dashboard orqali o'rnating
+#
+# Misol:
+# - Vercel: vercel.json faylini yarating va platforms.vercel qismini o'tkazing
+# - Netlify: netlify.toml faylini yarating va platforms.netlify qismini o'tkazing
+# - Heroku: Procfile faylini runtime.processes qismidan yarating
+# 
+# Izohlar:
+# - Barcha hostinglar bu sozlamalarning barchasini qo'llab-quvvatlamaydi
+# - Bu fayl universal yo'riqnoma sifatida ishlatilishi mumkin
+# - Har bir platform uchun aniq konfiguratsiyani rasmiy hujjatlardan tekshiring 

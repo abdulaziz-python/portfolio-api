@@ -1,0 +1,38 @@
+[build]
+  command = "./build_files.sh"
+  publish = "staticfiles_build"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+
+[context.production.environment]
+  DEBUG = "false"
+  ALLOWED_HOSTS = "*.netlify.app,*.abdulaziz.org.uz"
+
+[context.deploy-preview.environment]
+  DEBUG = "false"
+  ALLOWED_HOSTS = "*.netlify.app"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/.netlify/functions/admin/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self' https: data:; script-src 'self' https: 'unsafe-inline'; style-src 'self' https: 'unsafe-inline'" 
