@@ -16,6 +16,13 @@ class Skill(models.Model):
         return self.name
 
 class Project(models.Model):
+    STATUS_CHOICES = (
+        ('planning', 'Planning'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('archived', 'Archived'),
+    )
+    
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     image_url = models.URLField(blank=True, null=True)
@@ -24,9 +31,11 @@ class Project(models.Model):
     telegraph_path = models.CharField(max_length=255, blank=True, null=True)
     telegraph_page_id = models.CharField(max_length=255, blank=True, null=True)
     skills = models.ManyToManyField(Skill, related_name='projects', blank=True)
-    github_link = models.URLField(blank=True, null=True)
-    live_link = models.URLField(blank=True, null=True)
+    github_url = models.URLField(blank=True, null=True)
+    demo_url = models.URLField(blank=True, null=True)
+    source_url = models.URLField(blank=True, null=True)
     featured = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planning')
     views = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -124,10 +133,12 @@ class Project(models.Model):
             content.append({'tag': 'p', 'children': [f"Skills: {skill_text}"]})
             
         links = []
-        if self.github_link:
-            links.append({'tag': 'a', 'attrs': {'href': self.github_link}, 'children': ['GitHub']})
-        if self.live_link:
-            links.append({'tag': 'a', 'attrs': {'href': self.live_link}, 'children': ['Live Demo']})
+        if self.github_url:
+            links.append({'tag': 'a', 'attrs': {'href': self.github_url}, 'children': ['GitHub']})
+        if self.demo_url:
+            links.append({'tag': 'a', 'attrs': {'href': self.demo_url}, 'children': ['Live Demo']})
+        if self.source_url:
+            links.append({'tag': 'a', 'attrs': {'href': self.source_url}, 'children': ['Source']})
             
         if links:
             content.append({'tag': 'p', 'children': ['Links: '] + links})
@@ -188,11 +199,13 @@ class Project(models.Model):
                                     text = "".join(child.get('children', []))
                                     
                                     if text == "GitHub" and link:
-                                        self.github_link = link
+                                        self.github_url = link
                                     elif text == "Live Demo" and link:
-                                        self.live_link = link
+                                        self.demo_url = link
+                                    elif text == "Source" and link:
+                                        self.source_url = link
                                     
-                models.Model.save(self, update_fields=['description', 'image_url', 'github_link', 'live_link'])
+                models.Model.save(self, update_fields=['description', 'image_url', 'github_url', 'demo_url', 'source_url'])
                 return True
                 
         except Exception as e:

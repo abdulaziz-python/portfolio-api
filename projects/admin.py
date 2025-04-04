@@ -3,6 +3,19 @@ from django.contrib.admin import ModelAdmin
 from .models import Project, Skill
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin
+from django.contrib.admin import SimpleListFilter
+
+class StatusFilter(SimpleListFilter):
+    title = 'status'
+    parameter_name = 'status'
+    
+    def lookups(self, request, model_admin):
+        return Project.STATUS_CHOICES
+    
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(status=self.value())
+        return queryset
 
 @admin.register(Skill)
 class SkillAdmin(ModelAdmin):
@@ -23,7 +36,7 @@ class SkillAdmin(ModelAdmin):
 @admin.register(Project)
 class ProjectAdmin(ModelAdmin):
     list_display = ('title', 'status_badge', 'show_image', 'created_at')
-    list_filter = ('featured', 'status', 'skills', 'created_at')
+    list_filter = ('featured', StatusFilter, 'created_at', 'skills')
     search_fields = ('title', 'description')
     prepopulated_fields = {'slug': ('title',)}
     filter_horizontal = ('skills',)
