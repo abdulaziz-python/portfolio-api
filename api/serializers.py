@@ -27,7 +27,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = ['id', 'title', 'slug', 'image_url', 'description', 'skills', 
-                 'github_link', 'live_link', 'telegraph_url', 'featured',
+                 'github_url', 'demo_url', 'source_url', 'telegraph_url', 'featured',
                  'views', 'created_at', 'absolute_url']
         
     def create(self, validated_data):
