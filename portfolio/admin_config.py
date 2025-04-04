@@ -42,7 +42,7 @@ UNFOLD = {
     ],
     "BORDER_RADIUS": "12px",
     "THEME": {
-        "DEFAULT": "light",
+        "DEFAULT": "dark",
         "SWITCHER": True
     },
     "COLORS": {
