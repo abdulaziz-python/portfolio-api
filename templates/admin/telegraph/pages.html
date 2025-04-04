@@ -1,0 +1,214 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+<style>
+    .telegraph-page-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+    
+    .telegraph-page-card {
+        background-color: rgba(var(--color-base-50), 1);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .telegraph-page-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .telegraph-page-card__header {
+        padding: 15px;
+        background-color: rgba(var(--color-primary-100), 0.7);
+        border-bottom: 1px solid rgba(var(--color-primary-200), 0.5);
+    }
+    
+    .telegraph-page-card__title {
+        font-weight: 600;
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .telegraph-page-card__body {
+        padding: 15px;
+        flex: 1;
+    }
+    
+    .telegraph-page-card__stats {
+        display: flex;
+        margin-bottom: 10px;
+        color: rgba(var(--color-default-light), 0.8);
+        font-size: 0.85rem;
+    }
+    
+    .telegraph-page-card__stats-item {
+        display: flex;
+        align-items: center;
+        margin-right: 15px;
+    }
+    
+    .telegraph-page-card__stats-item i {
+        margin-right: 5px;
+        font-size: 16px;
+    }
+    
+    .telegraph-page-card__path {
+        background-color: rgba(var(--color-base-100), 0.5);
+        padding: 5px 10px;
+        border-radius: calc(var(--border-radius) / 2);
+        font-family: monospace;
+        font-size: 0.8rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .telegraph-page-card__footer {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 15px;
+        background-color: rgba(var(--color-base-100), 0.5);
+        border-top: 1px solid rgba(var(--color-base-200), 0.5);
+    }
+    
+    .telegraph-page-card__actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .telegraph-page-card__actions a {
+        display: flex;
+        align-items: center;
+        color: rgba(var(--color-primary-600), 1);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    
+    .telegraph-page-card__actions a:hover {
+        color: rgba(var(--color-primary-700), 1);
+    }
+    
+    .telegraph-page-card__actions a i {
+        margin-right: 5px;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        background-color: rgba(var(--color-base-50), 0.7);
+        border-radius: var(--border-radius);
+        margin-top: 20px;
+    }
+    
+    .empty-state__icon {
+        font-size: 48px;
+        color: rgba(var(--color-base-300), 1);
+        margin-bottom: 15px;
+    }
+    
+    .empty-state__message {
+        font-size: 1.2rem;
+        color: rgba(var(--color-default-light), 0.8);
+        margin-bottom: 20px;
+    }
+    
+    .empty-state__button {
+        display: inline-flex;
+        align-items: center;
+        background-color: rgba(var(--color-primary-600), 1);
+        color: white;
+        padding: 8px 16px;
+        border-radius: calc(var(--border-radius) / 2);
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+    
+    .empty-state__button:hover {
+        background-color: rgba(var(--color-primary-700), 1);
+    }
+    
+    .empty-state__button i {
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; {% trans 'Telegraph Pages' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h2>{% trans "Telegraph Pages" %}</h2>
+        
+        {% if pages %}
+            <div class="telegraph-page-list">
+                {% for page in pages %}
+                <div class="telegraph-page-card">
+                    <div class="telegraph-page-card__header">
+                        <h3 class="telegraph-page-card__title">{{ page.title }}</h3>
+                    </div>
+                    <div class="telegraph-page-card__body">
+                        <div class="telegraph-page-card__stats">
+                            <div class="telegraph-page-card__stats-item">
+                                <i class="material-icons">visibility</i>
+                                <span>{{ page.views }}</span>
+                            </div>
+                            <div class="telegraph-page-card__stats-item">
+                                <i class="material-icons">calendar_today</i>
+                                <span>{{ page.created_at|date:"d.m.Y" }}</span>
+                            </div>
+                        </div>
+                        <div class="telegraph-page-card__path" title="{{ page.path }}">
+                            {{ page.path }}
+                        </div>
+                    </div>
+                    <div class="telegraph-page-card__footer">
+                        <div class="telegraph-page-card__actions">
+                            <a href="https://telegra.ph/{{ page.path }}" target="_blank">
+                                <i class="material-icons">open_in_new</i>
+                                <span>{% trans "View" %}</span>
+                            </a>
+                            <a href="{% url 'api-root' %}telegraph/page-info/?path={{ page.path }}" target="_blank">
+                                <i class="material-icons">code</i>
+                                <span>{% trans "API" %}</span>
+                            </a>
+                        </div>
+                        <div class="telegraph-page-card__date">
+                            {{ page.created_at|date:"d.m.Y" }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state__icon">
+                    <i class="material-icons">error_outline</i>
+                </div>
+                <div class="empty-state__message">
+                    {% trans "No Telegraph pages found or token is not configured." %}
+                </div>
+                <a href="{% url 'admin:index' %}" class="empty-state__button">
+                    <i class="material-icons">arrow_back</i>
+                    <span>{% trans "Back to Dashboard" %}</span>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

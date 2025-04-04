@@ -1,0 +1,565 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+<style>
+    .api-viewer-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .api-viewer {
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        border: 1px solid rgba(var(--color-base-200), 0.8);
+        background-color: rgba(var(--color-base-50), 1);
+        margin-bottom: 30px;
+    }
+    
+    .api-viewer__header {
+        background-color: rgba(var(--color-primary-100), 0.7);
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(var(--color-primary-200), 0.5);
+    }
+    
+    .api-viewer__title {
+        font-weight: 600;
+        font-size: 18px;
+        color: rgba(var(--color-important-light), 0.9);
+        margin: 0;
+    }
+    
+    .api-viewer__endpoint {
+        font-family: monospace;
+        font-size: 14px;
+        color: rgba(var(--color-default-light), 0.8);
+        background-color: rgba(var(--color-base-100), 0.5);
+        padding: 5px 10px;
+        border-radius: 4px;
+    }
+    
+    .api-viewer__controls {
+        padding: 15px 20px;
+        border-bottom: 1px solid rgba(var(--color-base-200), 0.5);
+    }
+    
+    .api-viewer__methods {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .api-method-button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .api-method-button.get {
+        background-color: rgba(16, 185, 129, 0.2);
+        color: rgba(6, 95, 70, 1);
+    }
+    
+    .api-method-button.get:hover {
+        background-color: rgba(16, 185, 129, 0.3);
+    }
+    
+    .api-method-button.post {
+        background-color: rgba(59, 130, 246, 0.2);
+        color: rgba(30, 64, 175, 1);
+    }
+    
+    .api-method-button.post:hover {
+        background-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    .api-method-button.put {
+        background-color: rgba(245, 158, 11, 0.2);
+        color: rgba(146, 64, 14, 1);
+    }
+    
+    .api-method-button.put:hover {
+        background-color: rgba(245, 158, 11, 0.3);
+    }
+    
+    .api-method-button.delete {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: rgba(153, 27, 27, 1);
+    }
+    
+    .api-method-button.delete:hover {
+        background-color: rgba(239, 68, 68, 0.3);
+    }
+    
+    .api-viewer__content {
+        padding: 20px;
+    }
+    
+    .api-viewer__params {
+        margin-bottom: 20px;
+    }
+    
+    .api-viewer__params-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+    
+    .api-viewer__param {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .api-viewer__param-key {
+        width: 150px;
+        padding: 8px 12px;
+        border: 1px solid rgba(var(--color-base-200), 1);
+        border-radius: 4px;
+        font-family: monospace;
+    }
+    
+    .api-viewer__param-value {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid rgba(var(--color-base-200), 1);
+        border-radius: 4px;
+        font-family: monospace;
+    }
+    
+    .api-viewer__param-add {
+        background-color: rgba(var(--color-primary-100), 0.7);
+        border: none;
+        border-radius: 4px;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(var(--color-primary-700), 1);
+        font-size: 20px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .api-viewer__param-add:hover {
+        background-color: rgba(var(--color-primary-200), 0.7);
+    }
+    
+    .api-viewer__body {
+        margin-bottom: 20px;
+    }
+    
+    .api-viewer__body-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+    
+    .api-viewer__body-content {
+        width: 100%;
+        height: 150px;
+        padding: 12px;
+        border: 1px solid rgba(var(--color-base-200), 1);
+        border-radius: 4px;
+        font-family: monospace;
+        resize: vertical;
+    }
+    
+    .api-viewer__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
+    .api-viewer__button {
+        padding: 10px 20px;
+        background-color: rgba(var(--color-primary-600), 1);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .api-viewer__button:hover {
+        background-color: rgba(var(--color-primary-700), 1);
+    }
+    
+    .api-viewer__button i {
+        font-size: 18px;
+    }
+    
+    .api-viewer__response {
+        margin-top: 20px;
+    }
+    
+    .api-viewer__response-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background-color: rgba(var(--color-base-100), 0.7);
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        border: 1px solid rgba(var(--color-base-200), 1);
+        border-bottom: none;
+    }
+    
+    .api-viewer__response-title {
+        font-weight: 600;
+        font-size: 16px;
+    }
+    
+    .api-viewer__response-status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    .api-viewer__response-status.success {
+        background-color: rgba(16, 185, 129, 0.2);
+        color: rgba(6, 95, 70, 1);
+    }
+    
+    .api-viewer__response-status.error {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: rgba(153, 27, 27, 1);
+    }
+    
+    .api-viewer__response-content {
+        font-family: monospace;
+        background-color: rgba(var(--color-base-800), 0.95);
+        color: rgba(var(--color-base-100), 1);
+        padding: 15px;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+        overflow: auto;
+        max-height: 300px;
+    }
+    
+    .api-viewer__response-content pre {
+        margin: 0;
+        white-space: pre-wrap;
+    }
+    
+    .api-viewer__endpoints {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .api-endpoint-button {
+        padding: 8px 16px;
+        background-color: rgba(var(--color-primary-100), 0.7);
+        color: rgba(var(--color-primary-700), 1);
+        border: 1px solid rgba(var(--color-primary-200), 0.5);
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .api-endpoint-button:hover {
+        background-color: rgba(var(--color-primary-200), 0.7);
+    }
+    
+    .api-endpoint-button.active {
+        background-color: rgba(var(--color-primary-600), 1);
+        color: white;
+        border-color: rgba(var(--color-primary-700), 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; {% trans 'API Viewer' %}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h2>{% trans "API Viewer" %}</h2>
+        
+        <div class="api-viewer-container">
+            <div class="api-viewer">
+                <div class="api-viewer__header">
+                    <h3 class="api-viewer__title">{% trans "API Explorer" %}</h3>
+                    <div class="api-viewer__endpoint" id="currentEndpoint">{% trans "Select an endpoint" %}</div>
+                </div>
+                
+                <div class="api-viewer__controls">
+                    <div class="api-viewer__endpoints">
+                        <button type="button" class="api-endpoint-button" data-endpoint="api/posts/">{% trans "Posts" %}</button>
+                        <button type="button" class="api-endpoint-button" data-endpoint="api/projects/">{% trans "Projects" %}</button>
+                        <button type="button" class="api-endpoint-button" data-endpoint="api/skills/">{% trans "Skills" %}</button>
+                        <button type="button" class="api-endpoint-button" data-endpoint="api/telegraph/page-info/">{% trans "Telegraph Page Info" %}</button>
+                        <button type="button" class="api-endpoint-button" data-endpoint="api/telegraph/token/">{% trans "Generate Telegraph Token" %}</button>
+                    </div>
+                    
+                    <div class="api-viewer__methods">
+                        <button type="button" class="api-method-button get" data-method="GET">GET</button>
+                        <button type="button" class="api-method-button post" data-method="POST">POST</button>
+                        <button type="button" class="api-method-button put" data-method="PUT">PUT</button>
+                        <button type="button" class="api-method-button delete" data-method="DELETE">DELETE</button>
+                    </div>
+                </div>
+                
+                <div class="api-viewer__content">
+                    <div class="api-viewer__params">
+                        <div class="api-viewer__params-title">{% trans "Query Parameters" %}</div>
+                        <div class="api-viewer__param">
+                            <input type="text" class="api-viewer__param-key" placeholder="key">
+                            <input type="text" class="api-viewer__param-value" placeholder="value">
+                            <button type="button" class="api-viewer__param-add" id="addParam">+</button>
+                        </div>
+                        <div id="params-container"></div>
+                    </div>
+                    
+                    <div class="api-viewer__body">
+                        <div class="api-viewer__body-title">{% trans "Request Body" %} (JSON)</div>
+                        <textarea class="api-viewer__body-content" id="requestBody" placeholder='{"key": "value"}'></textarea>
+                    </div>
+                    
+                    <div class="api-viewer__actions">
+                        <button type="button" class="api-viewer__button" id="sendRequest">
+                            <i class="material-icons">send</i>
+                            <span>{% trans "Send Request" %}</span>
+                        </button>
+                    </div>
+                    
+                    <div class="api-viewer__response" id="response" style="display: none;">
+                        <div class="api-viewer__response-header">
+                            <div class="api-viewer__response-title">{% trans "Response" %}</div>
+                            <div class="api-viewer__response-status" id="responseStatus"></div>
+                        </div>
+                        <div class="api-viewer__response-content">
+                            <pre id="responseContent"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extrajs %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM elementlarini olish
+        const currentEndpoint = document.getElementById('currentEndpoint');
+        const endpointButtons = document.querySelectorAll('.api-endpoint-button');
+        const methodButtons = document.querySelectorAll('.api-method-button');
+        const addParamButton = document.getElementById('addParam');
+        const paramsContainer = document.getElementById('params-container');
+        const requestBody = document.getElementById('requestBody');
+        const sendRequestButton = document.getElementById('sendRequest');
+        const response = document.getElementById('response');
+        const responseStatus = document.getElementById('responseStatus');
+        const responseContent = document.getElementById('responseContent');
+        
+        // O'zgaruvchilar
+        let selectedEndpoint = '';
+        let selectedMethod = 'GET';
+        
+        // Endpoint tugmalarini bosishni kuzatish
+        endpointButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                endpointButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                selectedEndpoint = this.dataset.endpoint;
+                currentEndpoint.textContent = selectedEndpoint;
+                
+                // Telegraph token endpointi uchun default POST method
+                if (selectedEndpoint === 'api/telegraph/token/') {
+                    setMethodActive('POST');
+                    requestBody.value = JSON.stringify({
+                        short_name: 'Abdulaziz',
+                        author_name: 'Abdulaziz'
+                    }, null, 2);
+                } else if (selectedEndpoint === 'api/telegraph/page-info/') {
+                    setMethodActive('GET');
+                    // Parametrlarni tozalash
+                    clearParams();
+                    // Path parametrini qo'shish
+                    addParam('path', '');
+                } else {
+                    setMethodActive('GET');
+                }
+            });
+        });
+        
+        // Method tugmalarini bosishni kuzatish
+        methodButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                setMethodActive(this.dataset.method);
+            });
+        });
+        
+        // Method ustunligini o'rnatish
+        function setMethodActive(method) {
+            selectedMethod = method;
+            methodButtons.forEach(b => b.classList.remove('active'));
+            const activeButton = document.querySelector(`.api-method-button[data-method="${method}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
+            
+            // Request body-ni ko'rsatish yoki yashirish
+            if (method === 'GET' || method === 'DELETE') {
+                requestBody.parentElement.style.display = 'none';
+            } else {
+                requestBody.parentElement.style.display = 'block';
+            }
+        }
+        
+        // Parametr qo'shish tugmasi
+        addParamButton.addEventListener('click', function() {
+            const keyInput = document.querySelector('.api-viewer__param-key');
+            const valueInput = document.querySelector('.api-viewer__param-value');
+            
+            if (keyInput.value.trim() !== '') {
+                addParam(keyInput.value, valueInput.value);
+                keyInput.value = '';
+                valueInput.value = '';
+            }
+        });
+        
+        // Yangi parametr qo'shish
+        function addParam(key, value) {
+            const paramDiv = document.createElement('div');
+            paramDiv.className = 'api-viewer__param';
+            paramDiv.innerHTML = `
+                <input type="text" class="api-viewer__param-key" value="${key}" readonly>
+                <input type="text" class="api-viewer__param-value" value="${value}">
+                <button type="button" class="api-viewer__param-add remove-param">-</button>
+            `;
+            
+            const removeButton = paramDiv.querySelector('.remove-param');
+            removeButton.addEventListener('click', function() {
+                paramDiv.remove();
+            });
+            
+            paramsContainer.appendChild(paramDiv);
+        }
+        
+        // Parametrlarni tozalash
+        function clearParams() {
+            paramsContainer.innerHTML = '';
+        }
+        
+        // So'rovni yuborish tugmasi
+        sendRequestButton.addEventListener('click', sendRequest);
+        
+        // API so'rovini yuborish
+        function sendRequest() {
+            if (!selectedEndpoint) {
+                alert('{% trans "Please select an endpoint" %}');
+                return;
+            }
+            
+            // Endpoint URL yaratish
+            let url = `/${selectedEndpoint}`;
+            
+            // Parametrlarni qo'shish
+            const params = new URLSearchParams();
+            paramsContainer.querySelectorAll('.api-viewer__param').forEach(param => {
+                const key = param.querySelector('.api-viewer__param-key').value;
+                const value = param.querySelector('.api-viewer__param-value').value;
+                params.append(key, value);
+            });
+            
+            if (params.toString()) {
+                url += `?${params.toString()}`;
+            }
+            
+            // So'rov tanasi
+            let body = null;
+            if (selectedMethod !== 'GET' && selectedMethod !== 'DELETE') {
+                try {
+                    body = JSON.parse(requestBody.value);
+                } catch (e) {
+                    alert('{% trans "Invalid JSON in request body" %}');
+                    return;
+                }
+            }
+            
+            // So'rovni jo'natish
+            sendRequestButton.disabled = true;
+            sendRequestButton.textContent = '{% trans "Loading..." %}';
+            
+            fetch(url, {
+                method: selectedMethod,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: body ? JSON.stringify(body) : null
+            })
+            .then(res => {
+                const status = res.status;
+                const statusText = res.statusText;
+                
+                responseStatus.textContent = `${status} ${statusText}`;
+                responseStatus.className = 'api-viewer__response-status';
+                responseStatus.classList.add(status >= 200 && status < 300 ? 'success' : 'error');
+                
+                return res.json().catch(() => ({ error: 'Invalid JSON response' }));
+            })
+            .then(data => {
+                responseContent.textContent = JSON.stringify(data, null, 2);
+                response.style.display = 'block';
+            })
+            .catch(error => {
+                responseStatus.textContent = 'Error';
+                responseStatus.className = 'api-viewer__response-status error';
+                responseContent.textContent = error.message;
+                response.style.display = 'block';
+            })
+            .finally(() => {
+                sendRequestButton.disabled = false;
+                sendRequestButton.innerHTML = '<i class="material-icons">send</i><span>{% trans "Send Request" %}</span>';
+            });
+        }
+        
+        // CSRF cookie olish
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // Birinchi endpointni tanlash
+        if (endpointButtons.length > 0) {
+            endpointButtons[0].click();
+        }
+    });
+</script>
+{% endblock %}
+{% endblock %} 

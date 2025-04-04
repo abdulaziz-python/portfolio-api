@@ -88,3 +88,47 @@ Admin panelga `/admin/` orqali kirishingiz mumkin. U yerda:
 
 - `blog.tasks.cleanup_old_posts`: Eski blog postlarini o'chirish (default: 1 yildan eski)
 - `projects.tasks.cleanup_unused_images`: Ishlatilmayotgan rasm fayllarini o'chirib tashlash 
+
+## Telegraph API Integratsiya
+
+Bu loyiha [Telegraph API](https://telegra.ph/api) bilan chuqur integratsiya qilingan. Barcha ma'lumotlar Telegraph-da saqlanadi va boshqariladi.
+
+### Asosiy xususiyatlar:
+
+- **Rasmlar Telegraphda saqlanadi**, mahalliy serverga yuklash o'rniga
+- **Blog postlari va loyihalar telegraphda** jsonlashtiriladi va avtomatik ravishda sinxronlashtiriladi
+- **Skill ikonkalari ham Telegraphda** saqlanadi
+- **Ma'lumotlar o'qish/yozish** faqat Telegraph API orqali amalga oshiriladi
+- **Real-time sinxronizatsiya** - o'zgarishlar Telegraph-da va backend bazada sinxronlashtirilgan
+
+### Telegraph API endpointlari:
+
+- `POST /api/telegraph/token/` - Yangi Telegraph token olish (admin huquqi bilan)
+- `POST /api/telegraph/upload-image/` - Rasmni Telegraphga yuklash
+- `GET /api/telegraph/page-info/?path=XXX` - Telegraph sahifasi haqida ma'lumot olish
+
+### Qo'shimcha API endpointlari:
+
+- `POST /api/posts/{slug}/sync_from_telegraph/` - Blog postni Telegraphdan sinxronlash
+- `POST /api/projects/{slug}/sync_from_telegraph/` - Loyihani Telegraphdan sinxronlash
+
+### Telegraph token olish uchun:
+
+1. [Telegraph](https://telegra.ph/) sahifasiga tashrif buyuring
+2. "..." menyusini bosib, hisob yarating
+3. "Your account" bo'limiga o'ting va `access_token` qiymatini nusxalash
+4. Yoki Telegraph API orqali token olish: `https://api.telegra.ph/createAccount?short_name=YourName&author_name=YourName`
+5. Yoki backendning `/api/telegraph/token/` endpointini ishlatish
+6. Tokenni `.env` fayliga qo'shing:
+
+```
+TELEGRAPH_TOKEN=your-token-here
+```
+
+## Yaxshilangan API xususiyatlari
+
+- Blog va loyihalar uchun ko'rishlar hisobi
+- Blogga sharhlar qo'shish imkoniyati
+- Loyihalarni tanlangan qilish va saralash
+- Ma'lumotlarni samarali qilish uchun optimallashtirilgan so'rovlar
+- Telegraph bilan avtomatik sinxronizatsiya 

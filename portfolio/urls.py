@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
+from api.urls import telegraph_pages_view, telegraph_upload_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    # Bosh sahifani admin paneliga yo'naltirish
+    path('api-viewer/', TemplateView.as_view(template_name='admin/api_viewer.html'), name='api-viewer'),
+    path('admin/telegraph/pages/', telegraph_pages_view, name='telegraph-pages'),
+    path('admin/telegraph/upload/', telegraph_upload_view, name='telegraph-upload'),
     path('', RedirectView.as_view(url='/admin/', permanent=True)),
 ]
 

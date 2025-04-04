@@ -1,0 +1,175 @@
+/* Admin Panel uchun custom CSS */
+
+/* Umimiy maydonlar stilizatsiyasi */
+.field-group {
+    background-color: rgba(var(--color-primary-50), 0.5);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(var(--color-primary-200), 0.8);
+    transition: all 0.3s ease;
+}
+
+.field-group:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+/* Telegraph ma'lumotlar maydoni */
+.field-telegraph_url,
+.field-telegraph_path,
+.field-telegraph_page_id {
+    display: flex;
+    padding: 0.5rem;
+    background-color: rgba(var(--color-primary-50), 0.3);
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+    border-left: 3px solid rgba(var(--color-primary-500), 0.8);
+}
+
+.field-telegraph_preview {
+    margin-top: 1rem;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(var(--color-base-200), 0.8);
+}
+
+.field-telegraph_preview iframe {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom textfield */
+.custom-textfield {
+    font-family: "Consolas", monospace;
+    resize: vertical;
+    line-height: 1.6;
+    color: rgba(var(--color-important-light), 0.9);
+}
+
+.custom-url-field {
+    font-family: "Consolas", monospace;
+    background-color: rgba(var(--color-base-100), 0.5);
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.custom-url-field:focus {
+    background-color: rgba(var(--color-primary-50), 0.5);
+    box-shadow: 0 0 0 2px rgba(var(--color-primary-500), 0.2);
+}
+
+/* Changelist stilizatsiyasi */
+.changelist-form-container table thead th {
+    background-color: rgba(var(--color-primary-100), 0.7);
+    padding: 0.75rem 1rem;
+}
+
+.changelist-form-container table tbody tr:hover {
+    background-color: rgba(var(--color-primary-50), 0.5);
+}
+
+/* Admin login sahifasi */
+.login {
+    background-image: linear-gradient(45deg, 
+        rgba(var(--color-primary-900), 0.9), 
+        rgba(var(--color-primary-800), 0.8)
+    );
+}
+
+.login .container {
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs */
+.tabs {
+    border-bottom: 1px solid rgba(var(--color-primary-200), 0.8);
+    padding-bottom: 0.5rem;
+}
+
+.tabs a.active {
+    border-bottom: 2px solid rgba(var(--color-primary-500), 1);
+}
+
+/* Views counter badgesi */
+.field-views .readonly {
+    display: inline-block;
+    background-color: rgba(var(--color-primary-500), 0.1);
+    border-radius: 2rem;
+    padding: 0.25rem 0.75rem;
+    font-weight: 600;
+    color: rgba(var(--color-primary-700), 1);
+}
+
+/* Blog card stilizatsiyasi */
+.blog-post-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.blog-post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.blog-post-card__header {
+    background-color: rgba(var(--color-primary-100), 0.7);
+    padding: 1rem;
+    border-bottom: 1px solid rgba(var(--color-primary-200), 0.5);
+}
+
+.blog-post-card__body {
+    padding: 1rem;
+    flex: 1;
+}
+
+.blog-post-card__footer {
+    padding: 1rem;
+    background-color: rgba(var(--color-base-50), 0.7);
+    border-top: 1px solid rgba(var(--color-base-100), 0.5);
+}
+
+/* API viewer */
+.api-viewer {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    border: 1px solid rgba(var(--color-base-200), 0.8);
+}
+
+.api-viewer__header {
+    background-color: rgba(var(--color-primary-100), 0.7);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.api-viewer__content {
+    padding: 1rem;
+    background-color: rgba(var(--color-base-50), 0.7);
+    max-height: 500px;
+    overflow: auto;
+}
+
+/* API response */
+.api-viewer__response {
+    font-family: "Consolas", monospace;
+    background-color: rgba(var(--color-base-800), 0.95);
+    color: rgba(var(--color-base-100), 1);
+    padding: 1rem;
+    border-radius: calc(var(--border-radius) / 2);
+    overflow: auto;
+    max-height: 300px;
+}
+
+.api-viewer__response pre {
+    margin: 0;
+    white-space: pre-wrap;
+} 

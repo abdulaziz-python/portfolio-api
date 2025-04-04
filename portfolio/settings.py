@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-zhl11b7z=la186+yas=j7ex3@22i2-=1jpb&j5suk-u13s&x=c'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-zhl11b7z=la186+yas=j7ex3@22i2-=1jpb&j5suk-u13s&x=c')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1', 'api.abdulaziz.org.uz']
+ALLOWED_HOSTS = ['api.abdulaziz.org.uz', '.vercel.app', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -74,9 +74,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-            'builtins': [
-                'blog.templatetags.custom_filters',
-            ],
         },
     },
 ]
@@ -88,10 +85,10 @@ WSGI_APPLICATION = 'portfolio.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # PostgreSQL ma'lumotlar bazasiga ulanish
-DATABASE_URL = "postgres://avnadmin:AVNS_dPjmnTXQbvMRCANMDZx@portfolio-database-ablaze-coder.k.aivencloud.com:18321/defaultdb?sslmode=require"
+DATABASE_URL = os.environ.get('DATABASE_URL', "postgres://avnadmin:AVNS_dPjmnTXQbvMRCANMDZx@portfolio-database-ablaze-coder.k.aivencloud.com:18321/defaultdb?sslmode=require")
 
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+    'default': dj_database_url.config(default=DATABASE_URL)
 }
 
 
@@ -166,19 +163,26 @@ CELERY_TIMEZONE = TIME_ZONE
 #     },
 # }
 
-# Django REST Framework
+# Telegraph API settings
+TELEGRAPH_TOKEN = os.environ.get('TELEGRAPH_TOKEN', '')
+SITE_URL = os.environ.get('SITE_URL', 'http://localhost:8000')
+
+# REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    }
 }
 
 # Django Unfold Admin
-UNFOLD = {
-    "SITE_TITLE": "Portfolio Admin",
-    "SITE_HEADER": "Portfolio Dashboard",
-    "SITE_SYMBOL": "dashboard",
-    "DASHBOARD_CALLBACK": "portfolio.dashboard.dashboard_stats",
-}
+from portfolio.admin_config import UNFOLD

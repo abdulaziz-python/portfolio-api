@@ -1,0 +1,116 @@
+/* Admin panel uchun maxsus CSS */
+
+:root {
+  --primary-color: #0ea5e9;
+  --primary-hover: #0284c7;
+  --primary-active: #0369a1;
+  --surface-hover: rgba(14, 165, 233, 0.05);
+  --border-radius: 10px;
+}
+
+/* Admin formlarini stillashtirish */
+.unfold-form input[type="text"],
+.unfold-form input[type="password"],
+.unfold-form input[type="email"],
+.unfold-form input[type="url"],
+.unfold-form input[type="number"],
+.unfold-form textarea,
+.unfold-form select {
+  transition: all 0.2s ease;
+  border-radius: var(--border-radius);
+  border-width: 1px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  width: 100%;
+}
+
+.unfold-form input[type="text"]:focus,
+.unfold-form input[type="password"]:focus,
+.unfold-form input[type="email"]:focus,
+.unfold-form input[type="url"]:focus,
+.unfold-form input[type="number"]:focus,
+.unfold-form textarea:focus,
+.unfold-form select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
+  outline: none;
+}
+
+/* Chiroyli kutublar */
+.unfold-card {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+}
+
+.unfold-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Dashboard maxsus stili */
+.unfold-dashboard-widget {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.unfold-dashboard-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* API endpointlari uchun maxsus stil */
+.api-endpoint {
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  margin-bottom: 0.5rem;
+  font-family: "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", monospace;
+  font-size: 0.75rem;
+  color: #1f2937;
+}
+
+.api-endpoint .method {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  font-weight: 600;
+}
+
+.api-endpoint .method.get {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.api-endpoint .method.post {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.api-endpoint .method.put {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.api-endpoint .method.delete {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Telegraph preview uchun stil */
+.telegraph-preview {
+  border-radius: var(--border-radius);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.telegraph-preview iframe {
+  border: none;
+  width: 100%;
+  height: 500px;
+} 
